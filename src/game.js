@@ -1,6 +1,12 @@
 class Game {
 
-    bestRunTime = parseInt(localStorage[nomangle("bt")]) || 0;
+    bestRunTime = (() => {
+        try {
+            return parseInt(localStorage[nomangle("bt")]) || 0;
+        } catch (e) {
+            return 0;
+        }
+    })();
     screens = [];
     difficulty = inputMode == INPUT_MODE_TOUCH ? DIFFICULTY_EASY : DIFFICULTY_NORMAL;
 
@@ -74,7 +80,11 @@ class Game {
             }
 
             this.bestRunTime = min(this.bestRunTime || 9999, this.runTime);
-            localStorage[nomangle("bt")] = this.bestRunTime;
+            try {
+                localStorage[nomangle("bt")] = this.bestRunTime;
+            } catch (e) {
+                // localStorage not available
+            }
 
             const blankScreen = this.navigate(new WorldScreen([]));
             await this.navigate(new RevengeScreen()).awaitCompletion();
